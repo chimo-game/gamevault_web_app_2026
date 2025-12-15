@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Play, Sparkles, Lock, ShieldAlert, Coins, Users, Clock, ShieldCheck, Loader2, UserPlus, LogIn, Globe, ChevronRight, Terminal, Gift, Info, Bell, Trophy, Star } from 'lucide-react';
+import { Play, Sparkles, Lock, ShieldAlert, Coins, Users, Clock, ShieldCheck, Loader2, UserPlus, LogIn, Globe, ChevronRight, Terminal, Gift, Info, Bell, Trophy, Star, TrendingUp, Zap } from 'lucide-react';
 
 interface LandingPageProps {
   onLogin: (username: string) => void;
@@ -15,6 +15,8 @@ const FAKE_ACTIVITIES = [
     { user: 'SlotKing', action: 'Withdrew', prize: '$450.00 CASH', color: 'text-green-400' },
     { user: 'SarahJ_22', action: 'Claimed', prize: 'WELCOME BONUS', color: 'text-yellow-400' },
     { user: 'OceanHunter', action: 'Hit', prize: 'x500 MULTIPLIER', color: 'text-purple-400' },
+    { user: 'VegasBaby', action: 'Won', prize: '12,500 COINS', color: 'text-yellow-400' },
+    { user: 'CryptoWhale', action: 'Withdrew', prize: '2.5 ETH', color: 'text-blue-400' },
 ];
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
@@ -38,15 +40,46 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   
   // Live Activity State
   const [currentActivity, setCurrentActivity] = useState(FAKE_ACTIVITIES[0]);
+  
+  // Top Ticker State
+  const [topTicker, setTopTicker] = useState(FAKE_ACTIVITIES[1]);
+  const [showTicker, setShowTicker] = useState(true);
+
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
-    // Scarcity ticker
+    // Scarcity ticker & Top Ticker Rotation
     const timer = setInterval(() => {
         setSlotsLeft(prev => Math.max(2, prev - (Math.random() > 0.8 ? 1 : 0)));
         setPlayersOnline(prev => prev + (Math.random() > 0.5 ? Math.floor(Math.random() * 5) : -Math.floor(Math.random() * 3)));
     }, 2000);
-    return () => clearInterval(timer);
+
+    const activityTimer = setInterval(() => {
+        setShowTicker(false);
+        setTimeout(() => {
+            const next = FAKE_ACTIVITIES[Math.floor(Math.random() * FAKE_ACTIVITIES.length)];
+            setTopTicker(next);
+            setShowTicker(true);
+            
+            // Dynamic Bonus Calculation based on "Live Market"
+            // If the latest winner won big, the available bonus pool fluctuates
+            setBonusCount(prev => {
+                // Simulate a live calculation algorithm
+                const volatility = Math.floor(Math.random() * 1500) - 500; 
+                let nextVal = prev + volatility;
+                // Soft clamps to keep it realistic
+                if (nextVal > 58000) nextVal = 50000;
+                if (nextVal < 42000) nextVal = 45000;
+                return nextVal;
+            });
+
+        }, 500);
+    }, 3500);
+
+    return () => {
+        clearInterval(timer);
+        clearInterval(activityTimer);
+    };
   }, []);
 
   // Audio System
@@ -142,7 +175,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                setProcessLog(p => [...p, "> CALCULATING REWARD..."]);
                const duration = 2500;
                const startTime = performance.now();
-               const endValue = bonusCount;
+               const endValue = bonusCount; // Use the dynamic value at this moment
 
                const animate = (time: number) => {
                    const elapsed = time - startTime;
@@ -234,20 +267,43 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
         <div className="relative z-10 w-full max-w-lg mt-12 mb-8 flex flex-col items-center">
             
+            {/* Tiny Winners Ticker */}
+            {stage === 'idle' && (
+                <div className="h-8 mb-2 flex items-center justify-center overflow-hidden">
+                    <div className={`transition-all duration-500 transform ${showTicker ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'}`}>
+                        <div className="flex items-center gap-2 bg-slate-900/60 border border-white/10 backdrop-blur-md px-3 py-1 rounded-full shadow-lg">
+                             <div className="bg-green-500/20 p-1 rounded-full">
+                                <TrendingUp className="w-3 h-3 text-green-400" />
+                             </div>
+                             <span className="text-[10px] md:text-xs text-gray-300 font-medium">
+                                <span className="font-bold text-white">{topTicker.user}</span> just won <span className={`${topTicker.color} font-bold`}>{topTicker.prize}</span>
+                             </span>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             {/* Header */}
             <div className="text-center mb-6 w-full">
                  <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-kirin-gold to-orange-500 arcade-font drop-shadow-[0_2px_4px_rgba(255,69,0,0.5)] mb-2">
-                    FIRE KIRIN
+                    Game Vault 777
                 </h1>
                 <p className="text-blue-300 font-bold tracking-widest text-[10px] md:text-sm uppercase mb-4">Official Web Simulator</p>
                 
-                {/* Bonus Badge (Only show when idle to avoid clutter during processing) */}
+                {/* Bonus Badge - Dynamic */}
                 {stage === 'idle' && (
-                    <div className="inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 border border-kirin-gold/50 rounded-full px-4 py-2 md:px-6 shadow-[0_0_20px_rgba(255,215,0,0.2)] max-w-full">
-                        <Coins className="w-6 h-6 text-yellow-400 animate-bounce shrink-0" />
+                    <div className="inline-flex items-center gap-3 bg-gradient-to-r from-slate-900 to-slate-800 border border-kirin-gold/50 rounded-full px-4 py-2 md:px-6 shadow-[0_0_20px_rgba(255,215,0,0.2)] max-w-full transition-all duration-500">
+                        <div className="relative">
+                            <Coins className="w-6 h-6 text-yellow-400 animate-bounce shrink-0" />
+                            <Zap className="w-3 h-3 text-white absolute -top-1 -right-1 animate-pulse" />
+                        </div>
                         <div className="text-left leading-tight">
-                            <div className="text-[10px] text-gray-400 font-bold uppercase">Pending Bonus</div>
-                            <div className="text-lg md:text-xl font-black text-white tabular-nums">{bonusCount.toLocaleString()} <span className="text-xs text-yellow-500">COINS</span></div>
+                            <div className="text-[10px] text-gray-400 font-bold uppercase flex items-center gap-1">
+                                Pending Bonus <span className="text-green-500 text-[9px] animate-pulse">● LIVE</span>
+                            </div>
+                            <div className="text-lg md:text-xl font-black text-white tabular-nums transition-all duration-300">
+                                {bonusCount.toLocaleString()} <span className="text-xs text-yellow-500">COINS</span>
+                            </div>
                         </div>
                     </div>
                 )}
