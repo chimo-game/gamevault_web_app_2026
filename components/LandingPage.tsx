@@ -277,9 +277,16 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen bg-[#050b14] flex flex-col items-center justify-center relative overflow-y-auto overflow-x-hidden font-sans p-4">
-        {/* Animated Background */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-blue-900/20 via-black to-black animate-pulse-fast fixed"></div>
-        <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-40 fixed"></div>
+        {/* Background Image with Deep Blur */}
+        <div className="absolute inset-0 fixed">
+            <img 
+                src="/images/background.jpg" 
+                alt="Background" 
+                className="w-full h-full object-cover"
+                style={{ filter: 'blur(20px)', transform: 'scale(1.1)' }}
+            />
+            <div className="absolute inset-0 bg-[#050b14]/80"></div>
+        </div>
         
         {/* Urgency Header */}
         <div className="fixed top-0 left-0 right-0 w-full bg-red-600/20 border-b border-red-500/50 backdrop-blur-sm p-2 flex justify-center items-center gap-4 z-50">
@@ -313,6 +320,14 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
             {/* Header */}
             <div className="text-center mb-6 w-full">
+                 {/* Logo */}
+                 <div className="flex justify-center mb-4">
+                     <img 
+                         src="/images/gamevault_logo.webp" 
+                         alt="Game Vault 777 Logo" 
+                         className="h-16 md:h-24 w-auto object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.8)]"
+                     />
+                 </div>
                  <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-kirin-gold to-orange-500 arcade-font drop-shadow-[0_2px_4px_rgba(255,69,0,0.5)] mb-2">
                     Game Vault 777
                 </h1>
