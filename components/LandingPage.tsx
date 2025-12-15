@@ -8,33 +8,87 @@ interface LandingPageProps {
 type AuthMode = 'signup' | 'claim';
 type Stage = 'idle' | 'processing' | 'locked' | 'verified';
 
-// Generate dynamic usernames for winners
+// Generate realistic names for winners - always generates new random names
 const generateWinnerName = () => {
-    const prefixes = ['Lucky', 'Dragon', 'Kirin', 'Slot', 'Ocean', 'Vegas', 'Gaming', 'Pro', 'Master', 'King'];
-    const suffixes = ['Slayer', 'Hunter', 'Master', 'King', 'Queen', 'Champ', 'Star', 'Ace', 'Boss', 'Legend'];
-    const numbers = Math.floor(Math.random() * 999) + 1;
-    return `${prefixes[Math.floor(Math.random() * prefixes.length)]}${suffixes[Math.floor(Math.random() * suffixes.length)]}_${numbers}`;
+    const firstNames = [
+        'James', 'Mary', 'John', 'Patricia', 'Robert', 'Jennifer', 'Michael', 'Linda', 'William', 'Elizabeth',
+        'David', 'Barbara', 'Richard', 'Susan', 'Joseph', 'Jessica', 'Thomas', 'Sarah', 'Christopher', 'Karen',
+        'Daniel', 'Nancy', 'Matthew', 'Lisa', 'Anthony', 'Betty', 'Mark', 'Margaret', 'Donald', 'Sandra',
+        'Steven', 'Ashley', 'Paul', 'Kimberly', 'Andrew', 'Emily', 'Joshua', 'Donna', 'Kenneth', 'Michelle',
+        'Kevin', 'Carol', 'Brian', 'Amanda', 'George', 'Dorothy', 'Timothy', 'Melissa', 'Ronald', 'Deborah',
+        'Jason', 'Stephanie', 'Edward', 'Rebecca', 'Jeffrey', 'Sharon', 'Ryan', 'Laura', 'Jacob', 'Cynthia',
+        'Gary', 'Kathleen', 'Nicholas', 'Amy', 'Eric', 'Angela', 'Jonathan', 'Shirley', 'Stephen', 'Anna',
+        'Larry', 'Brenda', 'Justin', 'Pamela', 'Scott', 'Emma', 'Brandon', 'Nicole', 'Benjamin', 'Helen',
+        'Samuel', 'Samantha', 'Frank', 'Katherine', 'Gregory', 'Christine', 'Raymond', 'Debra', 'Alexander', 'Rachel',
+        'Patrick', 'Carolyn', 'Jack', 'Janet', 'Dennis', 'Maria', 'Jerry', 'Catherine', 'Tyler', 'Frances',
+        'Aaron', 'Christina', 'Jose', 'Marie', 'Adam', 'Janet', 'Nathan', 'Catherine', 'Henry', 'Virginia',
+        'Zachary', 'Judy', 'Douglas', 'Joyce', 'Peter', 'Victoria', 'Noah', 'Kelly', 'Ethan', 'Lauren'
+    ];
+    
+    const lastNames = [
+        'Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez',
+        'Hernandez', 'Lopez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee',
+        'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young',
+        'Allen', 'King', 'Wright', 'Scott', 'Torres', 'Nguyen', 'Hill', 'Flores', 'Green', 'Adams',
+        'Nelson', 'Baker', 'Hall', 'Rivera', 'Campbell', 'Mitchell', 'Carter', 'Roberts', 'Gomez', 'Phillips',
+        'Evans', 'Turner', 'Diaz', 'Parker', 'Cruz', 'Edwards', 'Collins', 'Reyes', 'Stewart', 'Morris',
+        'Morales', 'Murphy', 'Cook', 'Rogers', 'Gutierrez', 'Ortiz', 'Morgan', 'Cooper', 'Peterson', 'Bailey',
+        'Reed', 'Kelly', 'Howard', 'Ramos', 'Kim', 'Cox', 'Ward', 'Richardson', 'Watson', 'Brooks',
+        'Chavez', 'Wood', 'James', 'Bennett', 'Gray', 'Mendoza', 'Ruiz', 'Hughes', 'Price', 'Alvarez',
+        'Castillo', 'Sanders', 'Patel', 'Myers', 'Long', 'Ross', 'Foster', 'Jimenez', 'Powell', 'Jenkins'
+    ];
+    
+    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    
+    // Sometimes add a middle initial for variety (30% chance)
+    if (Math.random() < 0.3) {
+        const middleInitial = String.fromCharCode(65 + Math.floor(Math.random() * 26)); // A-Z
+        return `${firstName} ${middleInitial}. ${lastName}`;
+    }
+    
+    return `${firstName} ${lastName}`;
 };
 
-const FAKE_ACTIVITIES = [
-    { user: generateWinnerName(), action: 'Claimed', prize: '5,000 COINS', color: 'text-yellow-400' },
-    { user: generateWinnerName(), action: 'Just Won', prize: 'MINI JACKPOT', color: 'text-red-400' },
-    { user: generateWinnerName(), action: 'Verified', prize: 'INSTANT ACCESS', color: 'text-green-400' },
-    { user: generateWinnerName(), action: 'Withdrew', prize: '$450.00 CASH', color: 'text-green-400' },
-    { user: generateWinnerName(), action: 'Claimed', prize: 'WELCOME BONUS', color: 'text-yellow-400' },
-    { user: generateWinnerName(), action: 'Hit', prize: 'x500 MULTIPLIER', color: 'text-purple-400' },
-    { user: generateWinnerName(), action: 'Won', prize: '12,500 COINS', color: 'text-yellow-400' },
-    { user: generateWinnerName(), action: 'Withdrew', prize: '$250.00 CASH', color: 'text-green-400' },
-];
+// Generate random activity with new name each time
+const generateRandomActivity = () => {
+    const actions = [
+        { action: 'Claimed', prize: '5,000 COINS', color: 'text-yellow-400' },
+        { action: 'Just Won', prize: 'MINI JACKPOT', color: 'text-red-400' },
+        { action: 'Verified', prize: 'INSTANT ACCESS', color: 'text-green-400' },
+        { action: 'Withdrew', prize: '$450.00 CASH', color: 'text-green-400' },
+        { action: 'Claimed', prize: 'WELCOME BONUS', color: 'text-yellow-400' },
+        { action: 'Hit', prize: 'x500 MULTIPLIER', color: 'text-purple-400' },
+        { action: 'Won', prize: '12,500 COINS', color: 'text-yellow-400' },
+        { action: 'Withdrew', prize: '$250.00 CASH', color: 'text-green-400' },
+        { action: 'Scored', prize: '8,750 COINS', color: 'text-yellow-400' },
+        { action: 'Hit', prize: 'x200 WIN', color: 'text-purple-400' },
+        { action: 'Won', prize: 'MEGA BONUS', color: 'text-red-400' },
+        { action: 'Claimed', prize: '3,000 COINS', color: 'text-yellow-400' },
+    ];
+    const randomAction = actions[Math.floor(Math.random() * actions.length)];
+    return {
+        user: generateWinnerName(),
+        action: randomAction.action,
+        prize: randomAction.prize,
+        color: randomAction.color
+    };
+};
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   const [authMode, setAuthMode] = useState<AuthMode>('signup');
   const [username, setUsername] = useState('');
   const [region, setRegion] = useState('NA_EAST');
   
-  // Game Stats Simulation
-  const [slotsLeft, setSlotsLeft] = useState(14);
-  const [bonusCount, setBonusCount] = useState(50000);
+  // Game Stats Simulation - Load from localStorage or use defaults
+  const [slotsLeft, setSlotsLeft] = useState(() => {
+    const saved = localStorage.getItem('gamevault_slotsLeft');
+    return saved ? parseInt(saved, 10) : Math.floor(Math.random() * 20) + 5; // Random between 5-24
+  });
+  const [bonusCount, setBonusCount] = useState(() => {
+    const saved = localStorage.getItem('gamevault_bonusCount');
+    return saved ? parseInt(saved, 10) : Math.floor(Math.random() * 20000) + 40000; // Random between 40000-60000
+  });
   const [playersOnline, setPlayersOnline] = useState(1429);
   
   // Logic State
@@ -47,18 +101,32 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
   const [showPrizeUI, setShowPrizeUI] = useState(false);
   
   // Live Activity State
-  const [currentActivity, setCurrentActivity] = useState(FAKE_ACTIVITIES[0]);
+  const [currentActivity, setCurrentActivity] = useState(generateRandomActivity());
   
   // Top Ticker State
-  const [topTicker, setTopTicker] = useState(FAKE_ACTIVITIES[1]);
+  const [topTicker, setTopTicker] = useState(generateRandomActivity());
   const [showTicker, setShowTicker] = useState(true);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
 
   useEffect(() => {
+    // Save slotsLeft and bonusCount to localStorage whenever they change
+    localStorage.setItem('gamevault_slotsLeft', slotsLeft.toString());
+  }, [slotsLeft]);
+
+  useEffect(() => {
+    // Save bonusCount to localStorage whenever it changes
+    localStorage.setItem('gamevault_bonusCount', bonusCount.toString());
+  }, [bonusCount]);
+
+  useEffect(() => {
     // Scarcity ticker & Top Ticker Rotation
     const timer = setInterval(() => {
-        setSlotsLeft(prev => Math.max(2, prev - (Math.random() > 0.8 ? 1 : 0)));
+        setSlotsLeft(prev => {
+            const newValue = Math.max(2, prev - (Math.random() > 0.8 ? 1 : 0));
+            localStorage.setItem('gamevault_slotsLeft', newValue.toString());
+            return newValue;
+        });
         setPlayersOnline(prev => prev + (Math.random() > 0.5 ? Math.floor(Math.random() * 5) : -Math.floor(Math.random() * 3)));
     }, 2000);
 
@@ -84,7 +152,8 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                     color: randomPrize.color
                 };
             } else {
-                next = FAKE_ACTIVITIES[Math.floor(Math.random() * FAKE_ACTIVITIES.length)];
+                // Always generate a new random activity with a new name
+                next = generateRandomActivity();
             }
             setTopTicker(next);
             setShowTicker(true);
@@ -98,6 +167,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                 // Soft clamps to keep it realistic
                 if (nextVal > 58000) nextVal = 50000;
                 if (nextVal < 42000) nextVal = 45000;
+                localStorage.setItem('gamevault_bonusCount', nextVal.toString());
                 return nextVal;
             });
 
@@ -226,9 +296,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
           if (i === 9) setProcessLog(p => [...p, "> VIP STATUS: ACTIVE"]);
           if (i === 10) setProcessLog(p => [...p, "> SECURITY CHECK REQUIRED..."]);
 
-          // Random background activity
+          // Random background activity - always generate new name
           if (i % 3 === 0) {
-              const randomActivity = FAKE_ACTIVITIES[Math.floor(Math.random() * FAKE_ACTIVITIES.length)];
+              const randomActivity = generateRandomActivity();
               setCurrentActivity(randomActivity);
           }
       }
@@ -289,7 +359,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
         </div>
         
         {/* Urgency Header */}
-        <div className="fixed top-0 left-0 right-0 w-full bg-red-600/20 border-b border-red-500/50 backdrop-blur-sm p-2 flex justify-center items-center gap-4 z-50">
+        <div className="fixed top-0 left-0 right-0 w-full bg-red-600/20 border-b border-red-500/50 backdrop-blur-sm p-2 flex flex-wrap justify-center items-center gap-2 z-50">
             <div className="flex items-center gap-2 animate-pulse">
                 <ShieldAlert className="w-3 h-3 md:w-4 md:h-4 text-red-400" />
                 <span className="text-red-100 text-[10px] md:text-xs font-bold tracking-widest uppercase">High Traffic: Server Capacity 99%</span>
