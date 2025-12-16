@@ -57,31 +57,29 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ balance, setBalance, jackpot,
     gain.connect(ctx.destination);
 
     if (type === 'spin') {
-        // Mechanical tick
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(200, now);
-        osc.frequency.exponentialRampToValueAtTime(50, now + 0.05);
-        gain.gain.setValueAtTime(0.05, now);
-        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+        // Modern digital whir - smooth spinning sound
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(300, now);
+        osc.frequency.linearRampToValueAtTime(150, now + 0.08);
+        gain.gain.setValueAtTime(0.06, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.08);
         osc.start(now);
-        osc.stop(now + 0.05);
+        osc.stop(now + 0.08);
     } else if (type === 'stop') {
-        // Heavy thud
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(100, now);
-        osc.frequency.exponentialRampToValueAtTime(40, now + 0.1);
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.linearRampToValueAtTime(0, now + 0.15);
+        // Satisfying lock-in sound
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(400, now);
+        osc.frequency.exponentialRampToValueAtTime(200, now + 0.12);
+        gain.gain.setValueAtTime(0.15, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
         osc.start(now);
-        osc.stop(now + 0.15);
+        osc.stop(now + 0.12);
     } else if (type === 'win') {
-        // Bright Arpeggio
-        // We don't use the default 'osc' here, so we disconnect it to be clean and avoid leaks, 
-        // though it wasn't started so it wouldn't play anyway.
+        // Celebratory fanfare - major chord progression
         osc.disconnect(); 
         gain.disconnect();
 
-        const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C E G C E
+        const notes = [523.25, 659.25, 783.99, 1046.50]; // C, E, G, C (major chord)
         notes.forEach((freq, i) => {
             const o = ctx.createOscillator();
             const g = ctx.createGain();
@@ -89,24 +87,33 @@ const SlotMachine: React.FC<SlotMachineProps> = ({ balance, setBalance, jackpot,
             g.connect(ctx.destination);
             o.type = 'sine';
             o.frequency.value = freq;
-            g.gain.setValueAtTime(0, now + i * 0.08);
-            g.gain.linearRampToValueAtTime(0.1, now + i * 0.08 + 0.02);
-            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.08 + 0.4);
-            o.start(now + i * 0.08);
-            o.stop(now + i * 0.08 + 0.5);
+            g.gain.setValueAtTime(0, now + i * 0.1);
+            g.gain.linearRampToValueAtTime(0.15, now + i * 0.1 + 0.03);
+            g.gain.exponentialRampToValueAtTime(0.001, now + i * 0.1 + 0.5);
+            o.start(now + i * 0.1);
+            o.stop(now + i * 0.1 + 0.5);
         });
     } else if (type === 'jackpot') {
-        // Siren / Alarm
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(600, now);
-        osc.frequency.linearRampToValueAtTime(1200, now + 0.2);
-        osc.frequency.linearRampToValueAtTime(600, now + 0.4);
-        osc.frequency.linearRampToValueAtTime(1200, now + 0.6);
-        osc.frequency.linearRampToValueAtTime(600, now + 0.8);
-        gain.gain.setValueAtTime(0.2, now);
-        gain.gain.linearRampToValueAtTime(0, now + 1.2);
-        osc.start(now);
-        osc.stop(now + 1.2);
+        // Epic victory sound - layered ascending tones
+        osc.disconnect();
+        gain.disconnect();
+        
+        // Create a dramatic ascending sequence
+        const jackpotNotes = [261.63, 329.63, 392.00, 523.25, 659.25, 783.99]; // C major scale
+        jackpotNotes.forEach((freq, i) => {
+            const o = ctx.createOscillator();
+            const g = ctx.createGain();
+            o.connect(g);
+            g.connect(ctx.destination);
+            o.type = i < 3 ? 'sine' : 'triangle';
+            o.frequency.value = freq;
+            const startTime = now + i * 0.15;
+            g.gain.setValueAtTime(0, startTime);
+            g.gain.linearRampToValueAtTime(0.2, startTime + 0.05);
+            g.gain.exponentialRampToValueAtTime(0.001, startTime + 0.6);
+            o.start(startTime);
+            o.stop(startTime + 0.6);
+        });
     }
   }, [isMuted]);
 

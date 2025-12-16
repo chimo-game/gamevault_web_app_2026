@@ -194,43 +194,72 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
       if (!audioCtxRef.current) return;
       const ctx = audioCtxRef.current;
       const t = ctx.currentTime;
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain);
-      gain.connect(ctx.destination);
 
       if (type === 'tick') {
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(800, t);
-          osc.frequency.exponentialRampToValueAtTime(200, t + 0.05);
-          gain.gain.setValueAtTime(0.05, t);
-          gain.gain.linearRampToValueAtTime(0, t + 0.05);
-          osc.start(t);
-          osc.stop(t + 0.05);
-      } else if (type === 'coin') {
+          // Modern digital beep - crisp and clean
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
           osc.type = 'sine';
-          osc.frequency.setValueAtTime(1200, t);
-          osc.frequency.exponentialRampToValueAtTime(1800, t + 0.1);
-          gain.gain.setValueAtTime(0.05, t);
-          gain.gain.linearRampToValueAtTime(0, t + 0.5);
+          osc.frequency.setValueAtTime(1000, t);
+          osc.frequency.exponentialRampToValueAtTime(800, t + 0.08);
+          gain.gain.setValueAtTime(0.08, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
           osc.start(t);
-          osc.stop(t + 0.5);
+          osc.stop(t + 0.08);
+      } else if (type === 'coin') {
+          // Success chime - ascending melody
+          const notes = [523.25, 659.25, 783.99]; // C, E, G
+          notes.forEach((freq, i) => {
+              const osc = ctx.createOscillator();
+              const gain = ctx.createGain();
+              osc.connect(gain);
+              gain.connect(ctx.destination);
+              osc.type = 'sine';
+              osc.frequency.value = freq;
+              gain.gain.setValueAtTime(0, t + i * 0.1);
+              gain.gain.linearRampToValueAtTime(0.12, t + i * 0.1 + 0.02);
+              gain.gain.exponentialRampToValueAtTime(0.001, t + i * 0.1 + 0.3);
+              osc.start(t + i * 0.1);
+              osc.stop(t + i * 0.1 + 0.3);
+          });
       } else if (type === 'alert') {
-          osc.type = 'sawtooth';
-          osc.frequency.setValueAtTime(200, t);
-          osc.frequency.linearRampToValueAtTime(150, t + 0.3);
-          gain.gain.setValueAtTime(0.1, t);
-          gain.gain.linearRampToValueAtTime(0, t + 0.3);
-          osc.start(t);
-          osc.stop(t + 0.3);
+          // Modern notification sound - soft but noticeable
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          const gain1 = ctx.createGain();
+          const gain2 = ctx.createGain();
+          osc1.connect(gain1);
+          osc2.connect(gain2);
+          gain1.connect(ctx.destination);
+          gain2.connect(ctx.destination);
+          
+          osc1.type = 'sine';
+          osc2.type = 'sine';
+          osc1.frequency.setValueAtTime(440, t);
+          osc2.frequency.setValueAtTime(554.37, t); // Perfect fifth
+          gain1.gain.setValueAtTime(0.06, t);
+          gain2.gain.setValueAtTime(0.04, t);
+          gain1.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.25);
+          osc1.start(t);
+          osc2.start(t);
+          osc1.stop(t + 0.25);
+          osc2.stop(t + 0.25);
       } else if (type === 'count') {
-          // Rapid ticking for counting
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(600, t);
-          gain.gain.setValueAtTime(0.02, t);
-          gain.gain.linearRampToValueAtTime(0, t + 0.03);
+          // Quick digital click - subtle counting sound
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(1200, t);
+          osc.frequency.exponentialRampToValueAtTime(800, t + 0.02);
+          gain.gain.setValueAtTime(0.04, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.02);
           osc.start(t);
-          osc.stop(t + 0.03);
+          osc.stop(t + 0.02);
       }
   };
 
@@ -542,7 +571,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
 
                     {/* Input Forms */}
                     {stage === 'idle' && (
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4 md:gap-5">
+                        <form onSubmit={handleSubmit} className="relative flex flex-col gap-4 md:gap-5 bg-slate-900/95 rounded-xl p-4 md:p-5 animate-pulse" style={{ 
+                            boxShadow: '0 0 0 2px rgba(255,215,0,0.8), 0 0 20px rgba(255,215,0,0.6), 0 0 40px rgba(0,191,255,0.4)'
+                        }}>
                             {authMode === 'signup' && (
                                 <div className="p-3 bg-blue-900/20 border border-blue-500/30 rounded-xl mb-1 flex items-start gap-3">
                                     <Sparkles className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
@@ -595,12 +626,15 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                             <button 
                                 type="submit" 
                                 disabled={!username.trim()}
-                                className="group relative w-full bg-gradient-to-r from-kirin-gold to-orange-600 hover:from-yellow-400 hover:to-orange-500 text-black font-black text-lg md:text-xl py-4 md:py-5 rounded-xl shadow-[0_0_20px_rgba(255,165,0,0.4)] active:scale-95 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden mt-2"
+                                className="group relative w-full bg-gradient-to-r from-kirin-gold to-orange-600 hover:from-yellow-400 hover:to-orange-500 text-black font-black text-lg md:text-xl py-4 md:py-5 rounded-xl active:scale-95 transition-all disabled:opacity-50 disabled:grayscale overflow-hidden mt-2 animate-pulse"
+                                style={{
+                                    boxShadow: '0 0 30px rgba(255,215,0,0.8), 0 0 60px rgba(255,165,0,0.6), 0 0 90px rgba(255,140,0,0.4), inset 0 0 20px rgba(255,255,255,0.2)'
+                                }}
                             >
-                                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.3)_50%,transparent_75%)] bg-[length:250%_250%,100%_100%] animate-[shimmer_2s_infinite]"></div>
-                                <span className="flex items-center justify-center gap-2">
+                                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%,100%_100%] animate-[shimmer_1.5s_infinite]"></div>
+                                <span className="relative z-10 flex items-center justify-center gap-2 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
                                     {authMode === 'signup' ? 'CREATE ID & CLAIM' : 'CLAIM REWARD'} 
-                                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition" />
+                                    <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                 </span>
                             </button>
                         </form>
