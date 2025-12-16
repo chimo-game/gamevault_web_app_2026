@@ -401,7 +401,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin }) => {
                  <h1 className="text-5xl md:text-7xl font-black italic tracking-tighter text-transparent bg-clip-text bg-gradient-to-b from-kirin-gold to-orange-500 arcade-font drop-shadow-[0_2px_4px_rgba(255,69,0,0.5)] mb-2">
                     Game Vault 777
                 </h1>
-                <p className="text-blue-300 font-bold tracking-widest text-[10px] md:text-sm uppercase mb-4">Premium Gaming Experience</p>
+                <p className="text-blue-300 font-bold tracking-widest text-[10px] md:text-sm uppercase mb-4">Where Winners Play</p>
                 
                 {/* Bonus Badge - Dynamic */}
                 {stage === 'idle' && (
